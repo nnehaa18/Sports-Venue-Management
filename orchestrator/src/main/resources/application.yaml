@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: orchestrator
+  datasource:
+    url: jdbc:mysql://localhost:3306/sports_booking
+    username: root
+    password: sql12345
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true

@@ -1,0 +1,57 @@
+create database if not exists sports_booking;
+use sports_booking;
+
+create table sports (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    sport_code VARCHAR(50) UNIQUE NOT NULL,
+    sport_name VARCHAR(100) NOT NULL,
+    active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP default CURRENT_TIMESTAMP,
+    modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+create table venues (
+	id BIGINT AUTO_INCREMENT PRIMARY KEY,
+	venue_name VARCHAR(150) NOT NULL,
+	location VARCHAR(255) NOT NULL,
+    active BOOLEAN DEFAULT TRUE,
+    created_by VARCHAR(50),
+    updated_by VARCHAR(50),
+    created_at TIMESTAMP default CURRENT_TIMESTAMP,
+    modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+create table venue_sports (
+    venue_id BIGINT NOT NULL,
+    sport_id BIGINT NOT NULL,
+    active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP default CURRENT_TIMESTAMP,
+    modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (venue_id, sport_id),
+    FOREIGN KEY (venue_id) REFERENCES venues(id),
+    FOREIGN KEY (sport_id) REFERENCES sports(id)
+);
+
+create table slots (
+	id bigint auto_increment primary key,
+    venue_id bigint not null,
+    sport_id bigint not null,
+    start_time datetime not null,
+    end_time datetime not null,
+    active boolean default true,
+    created_at timestamp default current_timestamp,
+    modified_at timestamp default current_timestamp on update current_timestamp,
+    foreign key(venue_id) references venues(id),
+    foreign key(sport_id) references sports(id),
+    index isx_slot_search (venue_id, sport_id, start_time, end_time)
+);
+
+create table bookings (
+	id bigint primary key auto_increment,
+    slot_id bigint not null,
+    status varchar(20) not null,
+    created_at timestamp default current_timestamp,
+    modified_at timestamp default current_timestamp on update current_timestamp,
+    constraint fk_booking_slot foreign key(slot_id) references slots(id),
+    constraint uq_active_booking unique (slot_id, status)
+);
